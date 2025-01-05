@@ -10,19 +10,23 @@ import { useEffect, useRef, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useDispatch } from "react-redux";
 import { addItem, updateItem } from "../redux/store";
+
 const BottomDrawer = ({
   openBottomSheet,
   editting,
   editingItem,
+  handleEditting,
 }: {
   openBottomSheet: () => void;
   editting: boolean;
   editingItem: any;
+  handleEditting: () => void;
 }) => {
   const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const slide = useRef(new Animated.Value(300)).current;
 
   const slideUp = () => {
@@ -39,18 +43,25 @@ const BottomDrawer = ({
       duration: 500,
       useNativeDriver: true,
     }).start(() => openBottomSheet());
+
+    handleEditting();
+    setName("");
+    setQuantity("");
+    setDescription("");
   };
 
   const handleSubmit = () => {
-    if (!name || !quantity) {
-      alert("Name and quantity are required!");
+    if (!name || !quantity || !category) {
+      alert("Name, quantity, and category are required!");
       return;
     }
+
     const itemData = {
       id: editingItem ? editingItem.id : Date.now(),
       name,
       quantity: parseInt(quantity),
       description,
+      category,
       purchased: editingItem ? editingItem.purchased : false,
     };
 
@@ -71,10 +82,12 @@ const BottomDrawer = ({
       setName(editingItem.name);
       setQuantity(editingItem.quantity.toString());
       setDescription(editingItem.description);
+      setCategory(editingItem.category || "");
     } else {
       setName("");
       setQuantity("");
       setDescription("");
+      setCategory("");
     }
   }, [editingItem]);
   return (
@@ -102,16 +115,20 @@ const BottomDrawer = ({
           />
           <TextInput
             style={styles.input}
+            placeholder="Category"
+            value={category}
+            onChangeText={setCategory}
+          />
+          <TextInput
+            style={styles.input}
             placeholder="Description (Optional)"
             value={description}
             onChangeText={setDescription}
           />
           <TouchableOpacity style={styles.deleteButton} onPress={handleSubmit}>
             <Text style={styles.deleteText}>
-              {" "}
               {editting ? "Edit Item" : "Add New Item"}
             </Text>
-            <AntDesign name="delete" size={24} color="white" />
           </TouchableOpacity>
         </Animated.View>
       </TouchableOpacity>
@@ -146,7 +163,7 @@ const styles = StyleSheet.create({
   deleteButton: {
     width: "50%",
     height: "10%",
-    backgroundColor: "red",
+    backgroundColor: "orange",
     justifyContent: "center",
     flexDirection: "row",
     gap: 20,

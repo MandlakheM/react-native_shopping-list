@@ -14,7 +14,7 @@ function MainApp() {
   const [bottomSheet, setBottomSheet] = useState<boolean>(false);
   const [editting, setEditting] = useState<boolean>(false);
   const [editingItem, setEditingItem] = useState(null);
-
+  const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
   const items = useSelector((state: any) => state.shoppingList.items);
 
@@ -24,10 +24,16 @@ function MainApp() {
   };
 
   const handleEditting = (item) => {
-    setEditting(true);
+    setEditting(!editingItem);
     setEditingItem(item);
     openBottomSheet();
   };
+
+  const filteredItems = items.filter(
+    (item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.category || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     loadItems(dispatch);
@@ -38,10 +44,10 @@ function MainApp() {
   }, [items]);
   return (
     <View style={styles.container}>
-      <Header />
+      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       {/* <ScrollView> */}
       <FlatList
-        data={items}
+        data={filteredItems}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <ItemContainer item={item} handleEditting={handleEditting} />
@@ -53,6 +59,7 @@ function MainApp() {
           openBottomSheet={openBottomSheet}
           editting={editting}
           editingItem={editingItem}
+          handleEditting={handleEditting}
         />
       ) : (
         <AddButton openBottomSheet={openBottomSheet} />

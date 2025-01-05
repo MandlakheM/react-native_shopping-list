@@ -1,11 +1,36 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
 import { useDispatch } from "react-redux";
 import { deleteItem, togglePurchased } from "../redux/store";
 import { Swipeable } from "react-native-gesture-handler";
-import EvilIcons from '@expo/vector-icons/EvilIcons';
-const ItemContainer = ({ item, handleEditting }: { item: any; handleEditting: () => any }) => {
+import EvilIcons from "@expo/vector-icons/EvilIcons";
+const ItemContainer = ({
+  item,
+  handleEditting,
+}: {
+  item: any;
+  handleEditting: () => any;
+}) => {
   const dispatch = useDispatch();
+
+  const getColorByCategory = (category) => {
+    switch (category) {
+      case "Fruits":
+        return "#FFEE93";
+      case "Vegetables":
+        return "#C6F6D5";
+      case "Dairy":
+        return "#BEE3F8";
+      default:
+        return "#E2E8F0";
+    }
+  };
 
   const renderRightActions = (progress: Animated.AnimatedInterpolation) => {
     const scale = progress.interpolate({
@@ -28,7 +53,12 @@ const ItemContainer = ({ item, handleEditting }: { item: any; handleEditting: ()
 
   return (
     <Swipeable renderRightActions={renderRightActions}>
-      <View style={styles.item}>
+      <View
+        style={[
+          styles.item,
+          { borderLeftColor: getColorByCategory(item.category) },
+        ]}
+      >
         <TouchableOpacity
           onPress={() => dispatch(togglePurchased(item.id))}
           style={styles.checkbox}
@@ -45,6 +75,7 @@ const ItemContainer = ({ item, handleEditting }: { item: any; handleEditting: ()
             {item.name}
           </Text>
           <Text style={styles.quantity}>Quantity: {item.quantity}</Text>
+          <Text style={styles.quantity}>Category: {item.category}</Text>
           {item.description && (
             <Text style={styles.description}>{item.description}</Text>
           )}
@@ -53,7 +84,7 @@ const ItemContainer = ({ item, handleEditting }: { item: any; handleEditting: ()
           style={styles.editButton}
           onPress={() => handleEditting(item)}
         >
-            <EvilIcons name="pencil" size={40} color="orange" />
+          <EvilIcons name="pencil" size={40} color="orange" />
           {/* <Text style={styles.editText}>Edit</Text> */}
         </TouchableOpacity>
       </View>
@@ -67,8 +98,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+    borderLeftWidth: 1,
     alignItems: "center",
-    backgroundColor: "white",
   },
   checkbox: {
     width: 24,
@@ -119,10 +150,3 @@ const styles = StyleSheet.create({
 });
 
 export default ItemContainer;
-
-git init
-git add .
-git commit -m "enabled redux, crud operations for user to munipulate their shopping items, UI still needs to be redone"
-git branch -M main
-git remote add origin https://github.com/MandlakheM/react-native_shopping-list.git
-git push -u origin main
