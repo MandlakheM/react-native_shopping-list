@@ -2,6 +2,8 @@
 
 A simple and intuitive shopping list app built using React Native and Redux. This app allows users to manage their shopping list efficiently, with features like adding, editing, deleting items, and searching for items by name or category.
 
+## Screen Shot
+![Image](https://github.com/user-attachments/assets/78f84c09-18ab-4e4a-8327-9b9330ea9783)
 ---
 
 ## Features
